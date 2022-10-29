@@ -2,16 +2,15 @@
 
 namespace CustomCollecion.Collection;
 
-public class CustomQueue<T> : ICollection<T>
+public class CustomQueue<T> : ICustomQueue<T>
 {
-
     private T[] _source;
 
     private readonly int _baseCapacity = 4;
 
     private int _tail;
     private int _size;
-    private int _head;
+    private int _head; 
 
     public CustomQueue()
     {
@@ -22,11 +21,6 @@ public class CustomQueue<T> : ICollection<T>
     public int Count => _size;
 
     public bool IsReadOnly => false;
-
-    public void Add(T item)
-    {
-        throw new NotImplementedException();
-    }
 
     public void Clear()
     {
@@ -129,7 +123,7 @@ public class CustomQueue<T> : ICollection<T>
             return false;
         }
 
-        return Array.IndexOf(_source, item, _head, _source.Length - _head) >= 0;
+        return Array.IndexOf(_source, item, _head, _size) >= 0;
     }
 
     public bool Remove(T item)

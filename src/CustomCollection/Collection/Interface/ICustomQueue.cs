@@ -1,6 +1,6 @@
 ﻿namespace CustomCollecion.Collection;
 
-public interface ICustomQueue<T>
+public interface ICustomQueue<T> : IEnumerable<T>
 {
     void Enqueue(T item);
     T Dequeue();

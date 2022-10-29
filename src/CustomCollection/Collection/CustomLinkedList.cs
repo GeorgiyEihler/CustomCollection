@@ -13,6 +13,19 @@ public class CustomLinkedList<T> : ICustomLinkedList<T>
 
     }
 
+    public CustomLinkedList(IEnumerable<T> collection)
+    {
+        if(collection is null)
+        {
+            throw new ArgumentNullException(nameof(collection));
+        }
+
+        foreach (T item in collection)
+        {
+            AddLast(item);
+        }
+    }
+
     public CusomNode<T>? Last => _head?.Previous;
 
     public CusomNode<T>? First => _head;

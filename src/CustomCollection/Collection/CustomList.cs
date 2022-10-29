@@ -80,7 +80,7 @@ public class CustomList<T> : ICustomList<T>
 
     public bool Contains(T item)
     {
-        return _source.Contains(item);
+        return _source.Contains(item) && Array.IndexOf(_source, item) < _size;
     }
 
     public void CopyTo(T[] array, int arrayIndex) =>
@@ -126,6 +126,11 @@ public class CustomList<T> : ICustomList<T>
 
     public void RemoveAt(int index)
     {
+        if(index < 0)
+        {
+            throw new InvalidOperationException();
+        }
+
         if (index >= _size)
         {
             throw new IndexOutOfRangeException("index");
@@ -147,12 +152,14 @@ public class CustomList<T> : ICustomList<T>
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return _source.AsEnumerable().GetEnumerator();
+        return new Enumerator(this);
+        //return _source.AsEnumerable().GetEnumerator();
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-        return ((IEnumerable<T>)_source).GetEnumerator(); ;
+        return new Enumerator(this);
+        //return ((IEnumerable<T>)_source).GetEnumerator(); ;
     }
 
     private void CustomListInit(int capacity, IEnumerable<T> source = null)
@@ -205,6 +212,70 @@ public class CustomList<T> : ICustomList<T>
         var newSourse = Resize();
 
         return newSourse;
+    }
+
+
+    internal class Enumerator : IEnumerator<T>
+    {
+        private readonly CustomList<T> _list;
+        private int _index;
+        private int _listIndex;
+        private T? _currentElement;
+
+        internal Enumerator(CustomList<T> list)
+        {
+            _list = list;
+            _index = -1;
+            _currentElement = default;
+        }
+
+        public void Dispose()
+        {
+            _index = -2;
+            _currentElement = default;
+        }
+
+        public bool MoveNext()
+        {
+            if (_index == -2)
+                return false;
+
+            _index++;
+
+            if (_index == _list._size)
+            {
+                _index = -2;
+                _currentElement = default;
+                return false;
+            }
+
+            _listIndex = _index;
+
+            _currentElement = _list._source[_listIndex];
+
+            return true;
+        }
+
+        public T Current
+        {
+            get
+            {
+                if (_index < 0)
+                    throw new ArgumentException(nameof(_index));
+                return _currentElement!;
+            }
+        }
+
+        object? IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        void IEnumerator.Reset()
+        {
+            _index = -1;
+            _currentElement = default;
+        }
     }
 
 

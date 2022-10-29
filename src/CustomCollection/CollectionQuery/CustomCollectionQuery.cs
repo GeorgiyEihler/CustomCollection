@@ -45,7 +45,7 @@ public static class CustomCollectionQuery
     public static IEnumerable<T> SortQuery<T, TKey>(
         this IEnumerable<T> source,
         Func<T, TKey> selector,
-        IComparer<TKey> comparer = null)
+        IComparer<TKey>? comparer = null)
     {
         comparer ??= Comparer<TKey>.Default;
 
@@ -89,11 +89,11 @@ internal class Sotrer<T, TKey>
             var pivot = _selector(_source[i + ((j - i) >> 1)]);
             do
             {
-                while (i < _source.Length && _comparer.Compare(_selector(_source[i]), pivot) > 0)
+                while (i < _source.Length && _comparer.Compare(_selector(_source[i]), pivot) < 0)
                 {
                     i++;
                 }
-                while (j >= 0 && _comparer.Compare(_selector(_source[j]), pivot) < 0)
+                while (j >= 0 && _comparer.Compare(_selector(_source[j]), pivot) > 0)
                 {
                     j--;
                 }
